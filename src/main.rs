@@ -20,16 +20,15 @@ bitflags::bitflags! {
 fn main() {
     let now = Utc::now();
     let localnow: DateTime<Local> = Local::now();
-    let now32 = now.timestamp() as i32; // 32-bit timestamp
-
+    
     // Uncomment to get info on launch time
     // println!("Current UTC time: {}", now);
     // println!("Timestamp (seconds): {}", now.timestamp());
     // println!("You know the time is: {}", localnow);
-
+    
     // 2. Start with an empty set of flags
     let mut ab = MyFlags::empty();
-
+    
     // 3. Read arguments passed from the shell (skipping the binary name itself)
     for arg in env::args().skip(1) {
         match arg.as_str() {
@@ -64,14 +63,15 @@ fn main() {
             }
         }
     }
-
+    
     // 4. Check which flags were actually set by the user
     if ab.contains(MyFlags::A) {
+        let now32 = now.timestamp() as i32; // 32-bit timestamp
         println!("{}", now32);
         std::process::exit(0);
     }
     if ab.contains(MyFlags::B) {
-        println!("{}", now.timestamp());
+        println!("{}", now.timestamp()); // 64-bit timestamp
         std::process::exit(0);
     }
     if ab.contains(MyFlags::C) {
