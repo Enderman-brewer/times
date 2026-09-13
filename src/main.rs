@@ -33,7 +33,7 @@ fn main() {
             "-U" => ab |= MyFlags::B,
             "-S" => ab |= MyFlags::C,
             "-L" => ab |= MyFlags::D,
-            "--suppress-text" => ab |= MyFlags::Z,
+            "-s" | "--suppress-text" => ab |= MyFlags::Z,
             "-h" | "--help" => {
                 println!("Usage: my_program [options]");
                 println!("Options:");
@@ -41,6 +41,7 @@ fn main() {
                 println!("  -U    Show Unix time (64-bit)");
                 println!("  -S    Show UTC time");
                 println!("  -L    Show Local time");
+                println!("  -s    Suppress text output");
                 println!("  -h, --help    Show this help message");
                 std::process::exit(0);
             }
