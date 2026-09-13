@@ -3,12 +3,12 @@
 pkgname = times
 pkgbase = times
 xdata = pkgtype=pkg
-pkgver = 0.0.4-1
+pkgver = 0.0.5-1
 pkgdesc = A time program, but something's off
 url = 
-builddate = 1789293804
+builddate = 1789294617
 packager = Unknown Packager
-size = 443024
+size = 443168
 arch = x86_64
 depend = glibc
 makedepend = cargo

@@ -1,5 +1,5 @@
 pkgname=times
-pkgver=0.0.4
+pkgver=0.0.5
 pkgrel=1
 pkgdesc="A time program, but something's off"
 arch=('x86_64' 'aarch64')

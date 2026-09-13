@@ -13,6 +13,7 @@ bitflags::bitflags! {
         const D = 1 << 3;
         const E = 1 << 4;
         const F = 1 << 5;
+        const G = 1 << 6;
     }
 }
 
@@ -38,6 +39,7 @@ fn main() {
             "-L" => ab |= MyFlags::D,
             "-E" => ab |= MyFlags::E,
             "-P" => ab |= MyFlags::F,
+            "-F" => ab |= MyFlags::G,
             "-h" | "--help" => {
                 println!("Usage: times [options]");
                 println!("Options:");
@@ -47,6 +49,7 @@ fn main() {
                 println!("  -L    Show Local time");
                 println!("  -E    Show  time");
                 println!("  -P    Show pager time");
+                println!("  -F    The time, but forever");
                 println!("  -h, --help    Show this help message");
                 println!();
                 println!("Exit codes:");
@@ -80,7 +83,7 @@ fn main() {
         std::process::exit(0);
     }
     if ab.contains(MyFlags::E) {
-        println!("12:00:00 AM");
+        println!("\x1b[31m12:00:00 AM\x1b[0m");
         std::process::exit(0);
     }
     if ab.contains(MyFlags::F) {
@@ -90,6 +93,11 @@ fn main() {
             .exec(); // This replaces the current process with the new command
         eprintln!("Failed to execute pager: {}", error);
         std::process::exit(1);
+    }
+    if ab.contains(MyFlags::G) {
+        loop {
+            println!("{}", Utc::now());
+        }
     }
     if ab.is_empty() {
         println!("No flags were passed.");
