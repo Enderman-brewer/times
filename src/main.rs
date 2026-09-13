@@ -55,6 +55,7 @@ fn main() {
                 println!("  0    Success");
                 println!("  1    Unknown flag");
                 println!("  2    No flags were passed");
+                println!("  Anything else    Who the fuck knows");
                 std::process::exit(0);
             }
             _ => {
