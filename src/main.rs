@@ -6,7 +6,7 @@ use std::process::Command;
 
 bitflags::bitflags! {
     #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-    struct MyFlags: u8 {
+    struct MyFlags: u16 {
         const A = 1 << 0;
         const B = 1 << 1;
         const C = 1 << 2;
@@ -14,6 +14,8 @@ bitflags::bitflags! {
         const E = 1 << 4;
         const F = 1 << 5;
         const G = 1 << 6;
+        const H = 1 << 7;
+        const I = 1 << 8;
     }
 }
 
@@ -39,6 +41,8 @@ fn main() {
             "-E" => ab |= MyFlags::E,
             "-P" => ab |= MyFlags::F,
             "-F" => ab |= MyFlags::G,
+            "-Y" => ab |= MyFlags::H,
+            "-B" => ab |= MyFlags::I,
             "-h" | "--help" => {
                 println!("Usage: times [options]");
                 println!("Options:");
@@ -49,6 +53,8 @@ fn main() {
                 println!("  -E    Show  time");
                 println!("  -P    Show pager time");
                 println!("  -F    The time, but forever");
+                println!("  -Y    Time until Y2K38");
+                println!("  -B    Web browser time");
                 println!("  -h, --help    Show this help message");
                 println!();
                 println!("Exit codes:");
@@ -99,6 +105,27 @@ fn main() {
         loop {
             println!("{}", Utc::now());
         }
+    }
+    if ab.contains(MyFlags::H) {
+        let y2k38 = Utc.ymd(2038, 1, 19).and_hms(3, 14, 7);
+        let now = Utc::now();
+        let duration_until_y2k38 = y2k38.signed_duration_since(now);
+        println!("Time until Y2K38: {} seconds", duration_until_y2k38.num_seconds());
+        std::process::exit(0);
+    }
+    if ab.contains(MyFlags::I) {
+        let html = format!(
+            "<html><body><h1>Current Time</h1><p>{}</p></body></html>",
+            now
+        );
+        let temp_file_path = "/tmp/current_time.html";
+        std::fs::write(temp_file_path, html).expect("Unable to write to temporary file");
+        let error = Command::new("bash")
+            .arg("-c")
+            .arg(format!("xdg-open {}", temp_file_path))
+            .exec(); // This replaces the current process with the new command
+        eprintln!("Failed to open web browser: {}", error);
+        std::process::exit(1);
     }
     if ab.is_empty() {
         println!("No flags were passed.");

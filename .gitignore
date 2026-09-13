@@ -1,3 +1,4 @@
 target/
 src/build/
 *.pkg.tar.zst
+pkg/
