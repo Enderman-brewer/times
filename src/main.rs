@@ -9,6 +9,7 @@ bitflags::bitflags! {
         const B = 1 << 1;
         const C = 1 << 2;
         const D = 1 << 3;
+        const E = 1 << 4;
     }
 }
 
@@ -32,6 +33,7 @@ fn main() {
             "-U" => ab |= MyFlags::B,
             "-S" => ab |= MyFlags::C,
             "-L" => ab |= MyFlags::D,
+            "-E" => ab |= MyFlags::E,
             "-h" | "--help" => {
                 println!("Usage: times [options]");
                 println!("Options:");
@@ -39,6 +41,7 @@ fn main() {
                 println!("  -U    Show Unix time (64-bit)");
                 println!("  -S    Show UTC time");
                 println!("  -L    Show Local time");
+                println!("  -E    Show  time");
                 println!("  -h, --help    Show this help message");
                 println!();
                 println!("Exit codes:");
@@ -69,6 +72,10 @@ fn main() {
     }
     if ab.contains(MyFlags::D) {
         println!("{}", localnow);
+        std::process::exit(0);
+    }
+    if ab.contains(MyFlags::E) {
+        println!("12:00:00 AM");
         std::process::exit(0);
     }
     if ab.is_empty() {
