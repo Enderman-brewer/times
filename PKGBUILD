@@ -1,5 +1,5 @@
 pkgname=times
-pkgver=0.0.3
+pkgver=0.0.4
 pkgrel=1
 pkgdesc="A time program, but something's off"
 arch=('x86_64' 'aarch64')
@@ -9,11 +9,11 @@ source=()
 sha256sums=()
 
 build() {
-    cargo build --release --locked --target-dir ./build
+    cargo build --release --target-dir ./build
 }
 
 check() {
-    cargo test --release --locked --target-dir ./build
+    cargo test --release --target-dir ./build
 }
 
 package() {

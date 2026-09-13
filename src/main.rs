@@ -1,6 +1,8 @@
 use chrono::Utc;
 use chrono::prelude::*;
 use std::env; // 1. Import the env module
+use std::os::unix::process::CommandExt; // Required for .exec()
+use std::process::Command;
 
 bitflags::bitflags! {
     #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -10,6 +12,7 @@ bitflags::bitflags! {
         const C = 1 << 2;
         const D = 1 << 3;
         const E = 1 << 4;
+        const F = 1 << 5;
     }
 }
 
@@ -34,6 +37,7 @@ fn main() {
             "-S" => ab |= MyFlags::C,
             "-L" => ab |= MyFlags::D,
             "-E" => ab |= MyFlags::E,
+            "-P" => ab |= MyFlags::F,
             "-h" | "--help" => {
                 println!("Usage: times [options]");
                 println!("Options:");
@@ -42,6 +46,7 @@ fn main() {
                 println!("  -S    Show UTC time");
                 println!("  -L    Show Local time");
                 println!("  -E    Show  time");
+                println!("  -P    Show pager time");
                 println!("  -h, --help    Show this help message");
                 println!();
                 println!("Exit codes:");
@@ -77,6 +82,14 @@ fn main() {
     if ab.contains(MyFlags::E) {
         println!("12:00:00 AM");
         std::process::exit(0);
+    }
+    if ab.contains(MyFlags::F) {
+        let error = Command::new("bash")
+            .arg("-c")
+            .arg("date | less")
+            .exec(); // This replaces the current process with the new command
+        eprintln!("Failed to execute pager: {}", error);
+        std::process::exit(1);
     }
     if ab.is_empty() {
         println!("No flags were passed.");
