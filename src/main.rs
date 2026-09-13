@@ -9,7 +9,6 @@ bitflags::bitflags! {
         const B = 1 << 1;
         const C = 1 << 2;
         const D = 1 << 3;
-        const Z = 1 << 4;
     }
 }
 
@@ -33,16 +32,19 @@ fn main() {
             "-U" => ab |= MyFlags::B,
             "-S" => ab |= MyFlags::C,
             "-L" => ab |= MyFlags::D,
-            "-s" | "--suppress-text" => ab |= MyFlags::Z,
             "-h" | "--help" => {
-                println!("Usage: my_program [options]");
+                println!("Usage: times [options]");
                 println!("Options:");
                 println!("  -u    Show Unix time (32-bit)");
                 println!("  -U    Show Unix time (64-bit)");
                 println!("  -S    Show UTC time");
                 println!("  -L    Show Local time");
-                println!("  -s    Suppress text output");
                 println!("  -h, --help    Show this help message");
+                println!();
+                println!("Exit codes:");
+                println!("  0    Success");
+                println!("  1    Unknown flag");
+                println!("  2    No flags were passed");
                 std::process::exit(0);
             }
             _ => {
@@ -54,34 +56,23 @@ fn main() {
 
     // 4. Check which flags were actually set by the user
     if ab.contains(MyFlags::A) {
-        if !ab.contains(MyFlags::Z) {
-            println!("{}", now32);
-        } else {
-            println!("Unix time (32-bit): {}", now32);
-        }
+        println!("{}", now32);
+        std::process::exit(0);
     }
     if ab.contains(MyFlags::B) {
-        if !ab.contains(MyFlags::Z) {
-            println!("{}", now.timestamp());
-        } else {
-            println!("Unix time (64-bit): {}", now.timestamp());
-        }
+        println!("{}", now.timestamp());
+        std::process::exit(0);
     }
     if ab.contains(MyFlags::C) {
-        if !ab.contains(MyFlags::Z) {
-            println!("{}", now);
-        } else {
-            println!("UTC time: {}", now);
-        }
+        println!("{}", now);
+        std::process::exit(0);
     }
     if ab.contains(MyFlags::D) {
-        if !ab.contains(MyFlags::Z) {
-            println!("{}", localnow);
-        } else {
-            println!("Local time: {}", localnow);
-        }
+        println!("{}", localnow);
+        std::process::exit(0);
     }
     if ab.is_empty() {
         println!("No flags were passed.");
+        std::process::exit(2);
     }
 }
