@@ -16,6 +16,7 @@ bitflags::bitflags! {
         const G = 1 << 6;
         const H = 1 << 7;
         const I = 1 << 8;
+        const J = 1 << 9;
     }
 }
 
@@ -43,6 +44,7 @@ fn main() {
             "-F" => ab |= MyFlags::G,
             "-Y" => ab |= MyFlags::H,
             "-B" => ab |= MyFlags::I,
+            "-s" => ab |= MyFlags::J,
             "-h" | "--help" => {
                 println!("Usage: times [options]");
                 println!("Options:");
@@ -55,6 +57,7 @@ fn main() {
                 println!("  -F    The time, but forever");
                 println!("  -Y    Time until Y2K38");
                 println!("  -B    Web browser time");
+                println!("  -s    Attempt to use shaders");
                 println!("  -h, --help    Show this help message");
                 println!();
                 println!("Exit codes:");
@@ -127,6 +130,11 @@ fn main() {
         eprintln!("Failed to open web browser: {}", error);
         std::process::exit(1);
     }
+  if ab.contains(MyFlags::J) {
+        println!("\x1b[95m{}\x1b[0m", localnow);
+        println!("Error, shader GLOSSY-2 from \"ENDER'S SHADERS\" failed to load.");
+        std::process::exit(1);
+  }
     if ab.is_empty() {
         println!("No flags were passed.");
         std::process::exit(2);
