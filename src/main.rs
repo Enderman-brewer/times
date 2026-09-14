@@ -3,6 +3,8 @@ use chrono::prelude::*;
 use std::env; // 1. Import the env module
 use std::os::unix::process::CommandExt; // Required for .exec()
 use std::process::Command;
+use base64::{engine::general_purpose, Engine as _};
+
 
 bitflags::bitflags! {
     #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -19,6 +21,7 @@ bitflags::bitflags! {
         const J = 1 << 9;
         const K = 1 << 10;
         const L = 1 << 11;
+        const M = 1 << 12;
     }
 }
 
@@ -67,6 +70,7 @@ fn main() {
             "-s" => ab |= MyFlags::J,
             "-b" => ab |= MyFlags::K,
             "-T" => ab |= MyFlags::L,
+            "-B64" => ab |= MyFlags::M,
             "-h" | "--help" => {
                 println!("Usage: times [options]");
                 println!("Options:");
@@ -82,6 +86,7 @@ fn main() {
                 println!("  -b    Web browser time, but with JS");
                 println!("  -s    Attempt to use shaders");
                 println!("  -T    Themed");
+                println!("  -B64  Base64");
                 println!("  -h, --help    Show this help message");
                 println!();
                 println!("Exit codes:");
@@ -176,6 +181,13 @@ fn main() {
     if ab.contains(MyFlags::L) {
         let local_str = localnow.format("%Y-%m-%d %H:%M:%S.%f %:z").to_string();
         print_gradient(&local_str, (200, 10, 10), (70, 70, 70));
+    }
+    if ab.contains(MyFlags::M) {
+        let local_str = localnow.format("%Y-%m-%d %H:%M:%S.%f %:z").to_string();
+        let encoded_text = general_purpose::STANDARD.encode(local_str.as_bytes());
+        println!("{}", encoded_text);
+
+
     }
     if ab.is_empty() {
         println!("No flags were passed.");
