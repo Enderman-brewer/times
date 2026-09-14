@@ -1,31 +1,65 @@
 # times
 
-A brief description of what this project does and who it's for.
-
-## Features
-
-- Feature 1
-- Feature 2
-- Feature 3
+A time program, but something's off.
 
 ## Installation
 
+### From source
+
+Requires [Rust](https://www.rust-lang.org/tools/install).
+
 ```bash
-# Clone the repository
-git clone https://github.com$repo_name.git
+git clone https://github.com/your-username/times.git
+cd times
+cargo build --release
+```
 
-# Navigate to the directory
-cd $repo_name
+The binary will be at `target/release/times`.
 
-# Install dependencies
+### Arch Linux
+
+Install from the package:
+
+```bash
+makepkg -si
 ```
 
 ## Usage
 
-```bash
-# Provide examples of how to run or use the project
+```
+Usage: times [options]
+Options:
+  -u    Show Unix time (32-bit)
+  -U    Show Unix time (64-bit)
+  -S    Show UTC time
+  -L    Show Local time
+  -E    Show  time
+  -P    Show pager time
+  -F    The time, but forever
+  -Y    Time until Y2K38
+  -B    Web browser time
+  -s    Attempt to use shaders
+  -h, --help    Show help message
 ```
 
-## Contributing
+### Examples
 
-Contributions, issues, and feature requests are welcome! Feel free to check the issues page.
+```bash
+times -L              # Local time
+times -u              # Unix timestamp (32-bit)
+times -S              # UTC time
+times -Y              # Countdown to Y2K38
+times -B              # Open current time in your browser
+```
+
+## Exit codes
+
+| Code | Meaning |
+|------|---------|
+| 0    | Success |
+| 1    | Unknown flag |
+| 2    | No flags were passed |
+
+## License
+
+Do whatever you want with this.

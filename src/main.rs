@@ -17,6 +17,7 @@ bitflags::bitflags! {
         const H = 1 << 7;
         const I = 1 << 8;
         const J = 1 << 9;
+        const K = 1 << 10;
     }
 }
 
@@ -45,6 +46,7 @@ fn main() {
             "-Y" => ab |= MyFlags::H,
             "-B" => ab |= MyFlags::I,
             "-s" => ab |= MyFlags::J,
+            "-b" => ab |= MyFlags::K,
             "-h" | "--help" => {
                 println!("Usage: times [options]");
                 println!("Options:");
@@ -57,6 +59,7 @@ fn main() {
                 println!("  -F    The time, but forever");
                 println!("  -Y    Time until Y2K38");
                 println!("  -B    Web browser time");
+                println!("  -b    Web browser time, but with JS");
                 println!("  -s    Attempt to use shaders");
                 println!("  -h, --help    Show this help message");
                 println!();
@@ -135,6 +138,20 @@ fn main() {
         println!("Error, shader GLOSSY-2 from \"ENDER'S SHADERS\" failed to load.");
         std::process::exit(0);
   }
+    if ab.contains(MyFlags::K) {
+        let html = format!(
+            r#"<html><body><h1>Current Time</h1><p>Compiled on: {}</p><p id="time"></p><script>setInterval(()=>document.getElementById("time").textContent=new Date().toISOString().replace("T"," ").replace("Z"," UTC"),1000)</script></body></html>"#,
+            now
+        );
+        let temp_file_path = "/tmp/current_time_js.html";
+        std::fs::write(temp_file_path, html).expect("Unable to write to temporary file");
+        let error = Command::new("bash")
+            .arg("-c")
+            .arg(format!("xdg-open {}", temp_file_path))
+            .exec(); // This replaces the current process with the new command
+        eprintln!("Failed to open web browser: {}", error);
+        std::process::exit(1);
+    }
     if ab.is_empty() {
         println!("No flags were passed.");
         std::process::exit(2);
