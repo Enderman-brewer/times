@@ -133,7 +133,7 @@ fn main() {
   if ab.contains(MyFlags::J) {
         println!("\x1b[95m{}\x1b[0m", localnow);
         println!("Error, shader GLOSSY-2 from \"ENDER'S SHADERS\" failed to load.");
-        std::process::exit(1);
+        std::process::exit(0);
   }
     if ab.is_empty() {
         println!("No flags were passed.");
