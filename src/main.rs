@@ -18,7 +18,26 @@ bitflags::bitflags! {
         const I = 1 << 8;
         const J = 1 << 9;
         const K = 1 << 10;
+        const L = 1 << 11;
     }
+}
+
+fn print_gradient(text: &str, start: (u8, u8, u8), end: (u8, u8, u8)) {
+    let chars: Vec<char> = text.chars().collect();
+    let len = chars.len();
+
+    for (i, &c) in chars.iter().enumerate() {
+        // Compute interpolation ratio
+        let r = start.0 as f32 + (end.0 as f32 - start.0 as f32) * i as f32 / (len.max(1) - 1).max(1) as f32;
+        let g = start.1 as f32 + (end.1 as f32 - start.1 as f32) * i as f32 / (len.max(1) - 1).max(1) as f32;
+        let b = start.2 as f32 + (end.2 as f32 - start.2 as f32) * i as f32 / (len.max(1) - 1).max(1) as f32;
+
+        // Print character with truecolor ANSI code
+        print!("\x1b[38;2;{};{};{}m{}", r as u8, g as u8, b as u8, c);
+    }
+    
+    // Reset terminal styles at the end
+    println!("\x1b[0m");
 }
 
 fn main() {
@@ -47,6 +66,7 @@ fn main() {
             "-B" => ab |= MyFlags::I,
             "-s" => ab |= MyFlags::J,
             "-b" => ab |= MyFlags::K,
+            "-T" => ab |= MyFlags::L,
             "-h" | "--help" => {
                 println!("Usage: times [options]");
                 println!("Options:");
@@ -61,6 +81,7 @@ fn main() {
                 println!("  -B    Web browser time");
                 println!("  -b    Web browser time, but with JS");
                 println!("  -s    Attempt to use shaders");
+                println!("  -T    Themed");
                 println!("  -h, --help    Show this help message");
                 println!();
                 println!("Exit codes:");
@@ -151,6 +172,10 @@ fn main() {
             .exec(); // This replaces the current process with the new command
         eprintln!("Failed to open web browser: {}", error);
         std::process::exit(1);
+    }
+    if ab.contains(MyFlags::L) {
+        let local_str = localnow.format("%Y-%m-%d %H:%M:%S.%f %:z").to_string();
+        print_gradient(&local_str, (200, 10, 10), (70, 70, 70));
     }
     if ab.is_empty() {
         println!("No flags were passed.");
